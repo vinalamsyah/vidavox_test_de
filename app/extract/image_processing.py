@@ -5,8 +5,9 @@ import numpy as np
 POPPLER_PATH = r'C:\Users\MuhammadNAAL\AppData\Local\Programs\poppler-24.08.0\Library\bin'
 SAVE_IMG_PATH = r'D:\Personal\vidavox_test_de\tmp'
 
-def pdf_to_image(filename):
+def pdf_to_image(filename: str):
     """Wrapper for convert PDF to Pillow Image function"""
+    print('converting pdf to image')
     return convert_from_path(pdf_path=filename, poppler_path=POPPLER_PATH)
 
 def sort_contours(contours):
@@ -30,7 +31,8 @@ def contour_numbering(image, cnt, i):
 
 def preprocess_image(image):
     """Enhance the image for better OCR accuracy."""
-    
+    print('preprocessing image')
+
     image = np.array(image) # Convert PIL image to NumPy array
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) # Convert to grayscale
     _, thresh = cv2.threshold(gray, 230, 255, cv2.THRESH_BINARY_INV) # Binarization
@@ -38,6 +40,7 @@ def preprocess_image(image):
     kernel = np.ones((5,5))
     dilated = cv2.dilate(thresh, kernel, iterations = 5) # Dilation
 
+    print('detecting contour')
     contours, _ = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) # Contours
     contours = sort_contours(contours)
 
@@ -54,6 +57,7 @@ def preprocess_image(image):
     return result, segments
 
 def save_image(filename, image, multiple=False):
+    print('saving image')
     if multiple:
         for i, img in enumerate(image):
             cv2.imwrite(f'{SAVE_IMG_PATH}\\{filename}-{i+1}.png', img)
@@ -67,10 +71,10 @@ def save_image(filename, image, multiple=False):
 # print(text_from_pdf)
 
 if __name__ == '__main__':
-    images = convert_from_path(pdf_path, poppler_path=POPPLER_PATH)
+    images = pdf_to_image('D:\\Personal\\vidavox_test_de\\AR for improved learnability.pdf')
     for i, image in enumerate(images):
         print('='*30)
         print(i)
         image = np.array(image)
         processed_image = preprocess_image(image)
-        Image.fromarray(processed_image).save('D:\\Personal\\vidavox_test_de\\' + str(i) + '.png' )
+        cv2.imwrite(f'{SAVE_IMG_PATH}\\zz.png', processed_image)
