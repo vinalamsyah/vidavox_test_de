@@ -5,6 +5,7 @@ SPACY_PRETRAINED_PIPELINE = 'en_core_web_md'
 nlp = spacy.load(SPACY_PRETRAINED_PIPELINE)
 
 def ner_analysis(texts: list):
+    print('NER analysis')
     entities = [ 
         {
             'entityname': entity.text,
@@ -20,14 +21,14 @@ def ner_analysis(texts: list):
 
     return entities
 
+
 if __name__ == '__main__':
     import sys
     sys.path.append(r'D:\Personal\vidavox_test_de\app')
-    print(sys.path)
     from extract import ocr
 
     pdf_path = r'D:\Personal\vidavox_test_de\AR for improved learnability.pdf'
-    data, text = ocr.extract_text_from_pdf(pdf_path)
+    texts, text_str = ocr.extract_text_from_pdf(pdf_path)
     
-    for entity in ner_analysis(data):
+    for entity in ner_analysis(texts):
         print(entity)
