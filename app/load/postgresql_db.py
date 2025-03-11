@@ -128,6 +128,7 @@ if __name__ == '__main__':
     from extract import ocr
     from transform import text_processing as tp
 
+    # pdf_path = r'D:\Personal\vidavox_test_de\setiabudi2021Enhancing.pdf'
     pdf_path = r'D:\Personal\vidavox_test_de\AR for improved learnability.pdf'
     texts, texts_str = ocr.extract_text_from_pdf(pdf_path)
     

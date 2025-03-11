@@ -1,5 +1,8 @@
 import pytesseract
-from . import image_processing as ip
+import sys
+
+sys.path.append(r'D:\Personal\vidavox_test_de\app')
+from extract import image_processing as ip
 
 def extract_text_from_pdf(pdf_path: str):
     """Extract text from a multi-page scanned PDF."""
@@ -8,7 +11,7 @@ def extract_text_from_pdf(pdf_path: str):
     tabular_format = []
     
     for i, image in enumerate(images):
-        processed_image, segments = ip.preprocess_image(image) # Image Pre-processing
+        processed_image, segments = ip.layouting(image) # Image Pre-processing
 
         # SAVING IMAGE
         ip.save_image(f'{i}-0', processed_image)
