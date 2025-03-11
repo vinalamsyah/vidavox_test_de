@@ -4,7 +4,6 @@ import numpy as np
 from PIL import Image
 
 POPPLER_PATH = r'C:\Users\MuhammadNAAL\AppData\Local\Programs\poppler-24.08.0\Library\bin'
-SAVE_IMG_PATH = r'D:\Personal\vidavox_test_de\tmp'
 COLOR_CODE = {
     'r': (255,0,0),
     'g': (0,255,0),
@@ -14,7 +13,7 @@ COLOR_CODE = {
 }
 
 def pdf_to_image(filename: str):
-    """Wrapper for convert PDF to Pillow Image function"""
+    """Wrapper function for converting PDF to Pillow Image"""
     print('converting pdf to image')
     return convert_from_path(pdf_path=filename, poppler_path=POPPLER_PATH)
 
@@ -71,7 +70,7 @@ def layouting(image):
     _, result = cv2.threshold(final, 230, 255, cv2.THRESH_BINARY) # Binarization
     segments = [ result[y:y+h, x:x+w] for x, y, w, h in [ cv2.boundingRect(cnt) for cnt in contours ] ] # Mutilate the result image into segments
 
-    return result, segments
+    return { 'full': result, 'segments': segments }
 
 def image_clipping(image):
     print('preprocessing image')
@@ -88,28 +87,24 @@ def image_clipping(image):
     final, contours = _draw_contours(tmp, output_image=image.copy(), line_color='r', line_width=2, min_h=50, min_area=5100) # Second Contour
 
     result = final
-    segments = [ image[y:y+h, x:x+w] for x, y, w, h in [ cv2.boundingRect(cnt) for cnt in contours ] if h > 50 and w*h > 5100 ] # Mutilate the result image into segments
+    clips = [ image[y:y+h, x:x+w] for x, y, w, h in [ cv2.boundingRect(cnt) for cnt in contours ] if h > 50 and w*h > 5100 ] # Mutilate the result image into segments
 
-    return result, segments
-
-def save_image(filename, image, multiple=False):
-    print('saving image')
-    if multiple:
-        for i, img in enumerate(image):
-            Image.fromarray(img).save(f'{SAVE_IMG_PATH}\\{filename}-{i+1}.png')
-
-    else:
-        Image.fromarray(image).save(f'{SAVE_IMG_PATH}\\{filename}.png')
+    return clips
 
 
 if __name__ == '__main__':
-    images = pdf_to_image('D:\\Personal\\vidavox_test_de\\AR for improved learnability.pdf')
+    import sys
+
+    sys.path.append(r'D:\Personal\vidavox_test_de\app')
+    from load.local import save_image
+
+    images = pdf_to_image('D:\\Personal\\vidavox_test_de\\input\\AR for improved learnability.pdf')
     for i, image in enumerate(images):
         print('='*30)
         print(i)
         image = np.array(image)
-        processed_image, segments = layouting(image)
+        processed_image, segments = image_clipping(image)
         if processed_image is not None:
             # cv2.imwrite(f'{SAVE_IMG_PATH}\\{i}.png', processed_image)
             save_image(i,segments,multiple=True)
-            Image.fromarray(processed_image).save(f'{SAVE_IMG_PATH}\\{i}.png')
+            save_image(f'{i}-0', processed_image)

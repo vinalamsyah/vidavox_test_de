@@ -28,7 +28,7 @@ if __name__ == '__main__':
     from extract import ocr
 
     pdf_path = r'D:\Personal\vidavox_test_de\AR for improved learnability.pdf'
-    texts, text_str = ocr.extract_text_from_pdf(pdf_path)
+    texts, text_str = ocr.extract_text(pdf_path)
     
     for entity in ner_analysis(texts):
         print(entity)

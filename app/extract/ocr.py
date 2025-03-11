@@ -4,22 +4,15 @@ import sys
 sys.path.append(r'D:\Personal\vidavox_test_de\app')
 from extract import image_processing as ip
 
-def extract_text_from_pdf(pdf_path: str):
+def extract_text(layouts):
     """Extract text from a multi-page scanned PDF."""
-    images = ip.pdf_to_image(pdf_path) # Convert PDF pages to images
     text_format = ""
     tabular_format = []
     
-    for i, image in enumerate(images):
-        processed_image, segments = ip.layouting(image) # Image Pre-processing
-
-        # SAVING IMAGE
-        ip.save_image(f'{i}-0', processed_image)
-        ip.save_image(f'{i}', segments, multiple=True)
-
+    for i, layout in enumerate(layouts):
         print('OCRing')
         # OCR
-        tmp = [ pytesseract.image_to_string(sgmt, lang='eng', config='--psm 1').strip() for sgmt in segments ]
+        tmp = [ pytesseract.image_to_string(sgmt, lang='eng', config='--psm 1').strip() for sgmt in layout['segments'] ]
        
         text_format += f"\n--- Page {i+1} ---\n{'\n---\n'.join(tmp)}\n"
         tabular_format += [ 
@@ -43,7 +36,7 @@ if __name__ == '__main__':
     pdf_path = r'D:\Personal\vidavox_test_de\AR for improved learnability.pdf'
     output_path = r'D:\Personal\vidavox_test_de\result.txt'
 
-    data, text = extract_text_from_pdf(pdf_path)
+    data, text = extract_text(pdf_path)
     df = pd.DataFrame(data)
     df.to_csv('test.csv', sep=';')
     save_text_to_file(text, output_path)
