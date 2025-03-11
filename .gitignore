@@ -1,8 +1,8 @@
 # Specify filepatterns you want git to ignore.
 vidavox_env*
 tmp*
-*.txt
 *.png
 *.csv
 *.ipynb
 *__pycache__*
+huhuhu.py
