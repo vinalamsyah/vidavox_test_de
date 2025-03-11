@@ -16,5 +16,5 @@ It is recommended to use virtual environment so that package requirements for th
 cd ./app/api
 uvicorn endpoints:app --port 8080
 ```
-6. to start Demo UI by Streamlit
+5. to start Demo UI by Streamlit
 `streamlit run ./app/ui/home.py`
