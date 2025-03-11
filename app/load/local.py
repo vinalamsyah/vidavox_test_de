@@ -46,7 +46,7 @@ def save_images(entry: str, clips):
 
             finally:
                 images_data += [ 
-                    { 'pagenumber': pagenumber, 'imagepath': save_path, 'image': img_binary, 'caption': None }
+                    { 'pagenumber': pagenumber, 'imagepath': save_path, 'image': img_binary.getvalue(), 'caption': None }
                 ]
                 k += 1
 

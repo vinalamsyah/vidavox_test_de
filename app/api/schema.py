@@ -35,6 +35,6 @@ class ImagesData(BaseModel):
     pagenumber: int
     image: bytes
     imagepath: str
-    caption: str
+    caption: str | None
     extracted_at: datetime
 

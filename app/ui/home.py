@@ -57,55 +57,23 @@ def texts_page():
 
 
 def images_page():
-    delivery_file = st.file_uploader('Input Delivery data (.xlsx)')
-    delivery_buffer = copy.deepcopy(delivery_file)
+    docid = st.selectbox(
+        'Choose a document to show texts:',
+        list(df_docs['id']),
+        format_func= lambda x: df_docs.loc[df_docs['id'] == x, 'docpath'].values[0]
+    )
 
-    if delivery_buffer:
-        delivery_df = pd.read_excel(delivery_buffer)
-        # delivery_df.drop(columns=['Unnamed: 0'],inplace=True)
-        listed_delivery = delivery_df.T.to_dict().values()
-        deliveries = list(listed_delivery)
-        
-    vehicle_file = st.file_uploader('Input Vehicle Data (.xlxs)')
-    vehicle_buffer = copy.deepcopy(vehicle_file)
+    images = requests.get(f'http://localhost:8080/documents/{docid}/images').json()
+    df_images = pd.DataFrame(images)
 
-    if vehicle_buffer:
-        vehicle_df = pd.read_excel(vehicle_buffer)
-        # vehicle_df.drop(columns='Unnamed: 0',inplace=True)
-        listed_vehicle = vehicle_df.T.to_dict().values()
-        vehicles = list(listed_vehicle)
+    pagenumber = st.pills('Page', df_images['pagenumber'].sort_values(inplace=False).unique())
 
-    depot_file = st.file_uploader('Input Depot Data (.xlxs)')
-    depot_buffer = copy.deepcopy(depot_file)
+    if pagenumber:
+        images = requests.get(f'http://localhost:8080/documents/{docid}/images?pagenumber={pagenumber}').json()
+    st.dataframe(images)
 
-    if depot_buffer:
-        depot_df = pd.read_excel(depot_buffer)
-        # depot_df.drop(columns='Unnamed: 0',inplace=True)
-        listed_depot = depot_df.T.to_dict().values()
-        depot = list(listed_depot)
-        depot = depot[0]
-
-    time_limit = st.number_input('Input Time limit (SECOND)[15-120]',15,120,30)
-
-    if st.button('RUN'):
-        if len(vehicles)>10:
-            raise Exception('too many vehicles')
-
-        # loop = asyncio.new_event_loop()
-        # asyncio.set_event_loop(loop)
-        # runner = asyncio.get_event_loop()
-        # code,messages,result = loop.run_until_complete(routing(deliveries,vehicles,depot,time_limit))
-        
-        # if code !=-1:
-        #     data_detail = formatting_data(result,depot)
-        #     df = pd.DataFrame(data_detail)
-        #     modified_df = plotting_data(data_detail)
-
-        #     m = map_visualizer(depot,df)
-        else:
-            st.write('messages')
-
-        # data_visualization(result,data_detail,df,modified_df,m)
+    for path in df_images['imagepath']:
+        st.image(path)
 
 def entities_page():
     docid = st.selectbox(

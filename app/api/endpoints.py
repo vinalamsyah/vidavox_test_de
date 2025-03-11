@@ -95,18 +95,19 @@ async def get_entities(docid: int, pagenumber: int = None, ordernumber: int = No
     raise HTTPException(status_code=404, detail="Document not found.")
 
 @app.get('/documents/{docid}/images')
-async def get_images(docid: int, pagenumber: int = None) -> list[ImagesData]:
+async def get_images(docid: int, pagenumber: int = None):
     query_str = 'select id, pagenumber, image, imagepath, caption, extracted_at from extracted_images'
     query_str, params = where_builder(query_str, docid=docid, pagenumber=pagenumber)
 
     result = query_data(query_str, params)
+    # print(result)
     if result:
         return [ 
             {
                 'id': row[0], 
                 'docid': docid, 
                 'pagenumber': row[1], 
-                'image': row[2], 
+                # 'image': row[2], 
                 'imagepath': row[3], 
                 'caption': row[4],
                 'extracted_at': row[5]
