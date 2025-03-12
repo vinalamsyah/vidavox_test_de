@@ -15,8 +15,10 @@ PAGE_ICON_TAB = r"repository\image\agit.png"
 # from config.conf import *    
 # from objects.objects import map_visualizer,data_visualization
 
-documents = requests.get('http://localhost:8080/documents/all').json()
-df_docs = pd.DataFrame(documents)
+def get_list_documents():
+    documents = requests.get('http://localhost:8080/documents/all').json()
+    df_docs = pd.DataFrame(documents)
+    return documents, df_docs
 
 def typewriter(text):
     for word in text.split(' '):
@@ -24,6 +26,7 @@ def typewriter(text):
         time.sleep(0.01)
 
 def home_page():
+    documents, _ = get_list_documents()
     st.write('How To Use: ')
     st.write("""
     1. Pilih menu data yang ingin ditampilkan
@@ -31,55 +34,65 @@ def home_page():
     3. Bisa mem-filter halaman jika diinginkan
     4. Daftar dokumen yang bisa ditampilkan juga bisa dilihat di tabel berikut.
     """)
-    st.dataframe(documents)
+    if documents:
+        st.dataframe(documents)
 
 def texts_page():
+    _, df_docs = get_list_documents()
     #VARIABLE INITIALIZATION
     # file = st.file_uploader('Input the data')
 
     docid = st.selectbox(
         'Choose a document to show texts:',
         list(df_docs['id']),
-        format_func= lambda x: df_docs.loc[df_docs['id'] == x, 'docpath'].values[0]
+        format_func= lambda x: df_docs.loc[df_docs['id'] == x, 'docpath'].values[0],
+        index=None
     )
-    
-    texts = requests.get(f'http://localhost:8080/documents/{docid}/texts').json()
-    df_texts = pd.DataFrame(texts)
-    
-    pagenumber = st.pills('Page', df_texts['pagenumber'].sort_values(inplace=False).unique())
-    
-    if pagenumber:
-        texts = requests.get(f'http://localhost:8080/documents/{docid}/texts?pagenumber={pagenumber}').json()
-    st.dataframe(texts)
+    if docid:
+        texts = requests.get(f'http://localhost:8080/documents/{docid}/texts').json()
 
-    for txt in texts:
-        st.write_stream(typewriter(txt['textvalue']))
+        if texts:
+            df_texts = pd.DataFrame(texts)
+            pagenumber = st.pills('Page', df_texts['pagenumber'].sort_values(inplace=False).unique())
+            
+            if pagenumber:
+                texts = requests.get(f'http://localhost:8080/documents/{docid}/texts?pagenumber={pagenumber}').json()
+
+            st.dataframe(texts)
+            for txt in texts:
+                st.write_stream(typewriter(txt['textvalue']))
 
 
 def images_page():
+    _, df_docs = get_list_documents()
     docid = st.selectbox(
         'Choose a document to show texts:',
         list(df_docs['id']),
-        format_func= lambda x: df_docs.loc[df_docs['id'] == x, 'docpath'].values[0]
+        format_func= lambda x: df_docs.loc[df_docs['id'] == x, 'docpath'].values[0],
+        index=None
     )
 
-    images = requests.get(f'http://localhost:8080/documents/{docid}/images').json()
-    df_images = pd.DataFrame(images)
+    if docid:
+        images = requests.get(f'http://localhost:8080/documents/{docid}/images').json()
 
-    pagenumber = st.pills('Page', df_images['pagenumber'].sort_values(inplace=False).unique())
+        if images:
+            df_images = pd.DataFrame(images)
+            pagenumber = st.pills('Page', df_images['pagenumber'].sort_values(inplace=False).unique())
 
-    if pagenumber:
-        images = requests.get(f'http://localhost:8080/documents/{docid}/images?pagenumber={pagenumber}').json()
-    st.dataframe(images)
+            if pagenumber:
+                images = requests.get(f'http://localhost:8080/documents/{docid}/images?pagenumber={pagenumber}').json()
 
-    for path in df_images['imagepath']:
-        st.image(path)
+            st.dataframe(images)
+            for path in df_images['imagepath']:
+                st.image(path)
 
 def entities_page():
+    _, df_docs = get_list_documents()
     docid = st.selectbox(
         'Choose a document to show texts:',
         list(df_docs['id']),
-        format_func= lambda x: df_docs.loc[df_docs['id'] == x, 'docpath'].values[0]
+        format_func= lambda x: df_docs.loc[df_docs['id'] == x, 'docpath'].values[0],
+        index=None
     )
     
     entities = requests.get(f'http://localhost:8080/documents/{docid}/named-entities').json()

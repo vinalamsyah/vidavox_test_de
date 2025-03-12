@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
-from schema import DocumentsData, TextsData, EntitiesData, ImagesData
+from schema import DocumentsData, TextsData, EntitiesData
 import psycopg2 as pg
+# import numpy as np
+from io import BytesIO
 
 DBNAME = 'vidavox_test'
 USER = 'postgres'
@@ -107,7 +109,7 @@ async def get_images(docid: int, pagenumber: int = None):
                 'id': row[0], 
                 'docid': docid, 
                 'pagenumber': row[1], 
-                # 'image': row[2], 
+                'image': BytesIO(row[2]), 
                 'imagepath': row[3], 
                 'caption': row[4],
                 'extracted_at': row[5]

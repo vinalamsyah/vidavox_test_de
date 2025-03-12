@@ -29,12 +29,12 @@ class EntitiesData(BaseModel):
     extracted_at: datetime
 
 
-class ImagesData(BaseModel):
-    id: int
-    docid: int
-    pagenumber: int
-    image: bytes
-    imagepath: str
-    caption: str | None
-    extracted_at: datetime
+# class ImagesData(BaseModel):
+#     id: int
+#     docid: int
+#     pagenumber: int
+#     image: object
+#     imagepath: str
+#     caption: str | None
+#     extracted_at: datetime
 
