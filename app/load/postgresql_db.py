@@ -111,11 +111,11 @@ def save_tables(docid: int, tables):
             raise e
         
         else:
-            for i, tblrow in enumerate(row['tblraw']):
-                for key, val in zip(tblrow.keys, tblrow.values):
+            for i, tblrow in row['tblraw'].items():
+                for columnname, value in tblrow.items():
                     cursor.execute(
                         'INSERT INTO extracted_tables_raw (docid, pagenumber, tableid, rownumber, columnname, value) VALUES (%s, %s, %s, %s, %s, %s)',
-                        (docid, row['pagenumber'], tableid, i, key, val)
+                        (docid, row['pagenumber'], tableid, i, columnname, value)
                     )
     
     conn.commit()

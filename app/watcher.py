@@ -23,13 +23,13 @@ def _image_pipeline(entry, docid, doc):
     pg.save_images(docid, images_data)
 
 def _table_pipeline(entry, docid, doc):
-    pass
+    tables_data = ocr.extract_table(doc)
+    pg.save_tables(docid, tables_data)
 
 
 
 def run_etl_pipeline(filepath_input: str, entry: str):
-    status_code = 0
-    message = 'PIPELINE STARTED'
+    status_code, message = (0, 'PIPELINE STARTED')
 
     doc = ip.pdf_to_image(filepath_input) # Read File Convert to Image
     docid = pg.get_docid(filepath_input)
@@ -39,6 +39,9 @@ def run_etl_pipeline(filepath_input: str, entry: str):
     _image_pipeline(entry, docid, doc)
 
     _table_pipeline(entry, docid, doc)
+    
+    status_code, message = (1, 'PIPELINE COMPLETED')
+    return status_code, message
 
 
 class MyHandler(FileSystemEventHandler):

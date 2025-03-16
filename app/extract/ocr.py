@@ -1,8 +1,7 @@
 import pytesseract
-import sys
-
-sys.path.append(r'D:\Personal\vidavox_test_de\app')
-from extract import image_processing as ip
+from img2table.document import Image
+from io import BytesIO
+from img2table.ocr import TesseractOCR
 
 def extract_text(layouts):
     """Extract text from a multi-page scanned PDF."""
@@ -23,6 +22,27 @@ def extract_text(layouts):
     return tabular_format, text_format
 
 
+def extract_table(images):
+    """extracting tables"""
+
+    # image = np.array(image) # Convert PIL image to NumPy array
+    ocr = TesseractOCR()
+    result = []
+
+    for i, img in enumerate(images):
+        binary_img = BytesIO()
+        img.save(binary_img, format='PNG')
+        source = Image(binary_img)
+        tables = source.extract_tables(ocr=ocr, borderless_tables=True)
+        result += [
+            {'pagenumber': i+1, 'tablejson': tbl.df.to_json(), 'tableraw': tbl.df.to_dict(orient='index')} 
+            for tbl in tables 
+        ]
+
+    return result
+
+
+
 def save_text_to_file(text: str, output_path: str):
     """Save extracted text to a .txt file."""
     with open(output_path, "w", encoding="utf-8") as file:
@@ -31,12 +51,17 @@ def save_text_to_file(text: str, output_path: str):
 
 
 if __name__ == '__main__':
-    import pandas as pd
+    # import pandas as pd
+    import sys
 
-    pdf_path = r'D:\Personal\vidavox_test_de\AR for improved learnability.pdf'
+    sys.path.append(r'D:\Personal\vidavox_test_de\app')
+    from extract import image_processing as ip
+
+    pdf_path = r'D:\Personal\vidavox_test_de\input\AR for improved learnability.pdf'
     output_path = r'D:\Personal\vidavox_test_de\result.txt'
 
-    data, text = extract_text(pdf_path)
-    df = pd.DataFrame(data)
-    df.to_csv('test.csv', sep=';')
-    save_text_to_file(text, output_path)
+    doc = ip.pdf_to_image(pdf_path)
+    tables = extract_table(doc)
+    print(tables)
+    # df.to_csv('test.csv', sep=';')
+    # save_text_to_file(text, output_path)
