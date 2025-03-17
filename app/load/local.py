@@ -4,7 +4,7 @@ from io import BytesIO
 from PIL import Image
 import traceback
 
-SAVE_PATH = r'D:\Personal\vidavox_test_de\tmp'
+SAVE_PATH = f'{os.getcwd()}\\tmp'
 
 def init_dir():
     entry = f'{SAVE_PATH}\\{datetime.now().strftime('%Y%m%d%H%M%S%f')}'
@@ -31,14 +31,13 @@ def save_images(entry: str, clips):
     print('saving images')
     images_data = []
     k = 0
+    img_binary = BytesIO()
 
     for pagenumber, clip in clips:
         for j, img in enumerate(clip):
             save_path = f'{entry}\\images\\{k+1}.png'
             try:
                 Image.fromarray(img).save(save_path)
-
-                img_binary = BytesIO()
                 Image.fromarray(img).save(img_binary, format='PNG')
 
             except Exception:
