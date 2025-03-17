@@ -17,7 +17,7 @@ def _text_pipeline(entry, docid, doc):
     local.save_layouts(entry, layouts) #Saving Layouts (Layouts)
 
 def _image_pipeline(entry, docid, doc):
-    clips = [ (i, ip.image_clipping(page_image)) for i, page_image in enumerate(doc) ] # Image Clipping (Image) --> Images
+    clips = [ (i+1, ip.image_clipping(page_image)) for i, page_image in enumerate(doc) ] # Image Clipping (Image) --> Images
     images_data = local.save_images(entry, clips) # Saving Images (Images) --> Images Paths
 
     pg.save_images(docid, images_data)

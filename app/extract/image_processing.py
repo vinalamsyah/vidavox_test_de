@@ -1,7 +1,6 @@
 from pdf2image import convert_from_path
 import cv2
 import numpy as np
-from PIL import Image
 
 POPPLER_PATH = r'C:\Users\MuhammadNAAL\AppData\Local\Programs\poppler-24.08.0\Library\bin'
 COLOR_CODE = {
@@ -96,7 +95,7 @@ if __name__ == '__main__':
     import sys
 
     sys.path.append(r'D:\Personal\vidavox_test_de\app')
-    from load.local import save_image
+    from load.local import save_images, save_layouts
 
     images = pdf_to_image('D:\\Personal\\vidavox_test_de\\input\\AR for improved learnability.pdf')
     for i, image in enumerate(images):
@@ -106,5 +105,5 @@ if __name__ == '__main__':
         processed_image, segments = image_clipping(image)
         if processed_image is not None:
             # cv2.imwrite(f'{SAVE_IMG_PATH}\\{i}.png', processed_image)
-            save_image(i,segments,multiple=True)
-            save_image(f'{i}-0', processed_image)
+            save_images(i,segments,multiple=True)
+            save_images(f'{i}-0', processed_image)
