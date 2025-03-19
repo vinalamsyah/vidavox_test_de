@@ -7,7 +7,6 @@ import requests
 import time
 
 PAGE_TITLE = "Live Demo: Multi-Modal Data From Scanned Documents"
-PAGE_ICON_TAB = r"repository\image\agit.png"
 
 # from modules.downloadfunc import download_file,download_button
 # from modules.formatting import formatting_data,plotting_data
@@ -19,6 +18,30 @@ def get_list_documents():
     documents = requests.get('http://localhost:8080/documents/all').json()
     df_docs = pd.DataFrame(documents)
     return documents, df_docs
+
+def paging_data(element):
+    _, df_docs = get_list_documents()
+    docid = st.selectbox(
+        'Choose a document to show texts:',
+        list(df_docs['id']),
+        format_func= lambda x: df_docs.loc[df_docs['id'] == x, 'docpath'].values[0],
+        index=None
+    )
+
+    result = None
+    if docid:
+        result = requests.get(f'http://localhost:8080/documents/{docid}/{element}').json()
+
+        if result:
+            list_pages = list(set([ row['pagenumber'] for row in result ])) + ['all']
+            pagenumber = st.pills('Page', list_pages, default=list_pages[0])
+
+            if pagenumber != 'all':
+                result = requests.get(f'http://localhost:8080/documents/{docid}/{element}?pagenumber={pagenumber}').json()
+            
+            st.dataframe(result)
+
+    return result
 
 def typewriter(text):
     for word in text.split(' '):
@@ -38,74 +61,36 @@ def home_page():
         st.dataframe(documents)
 
 def texts_page():
-    _, df_docs = get_list_documents()
-    #VARIABLE INITIALIZATION
-    # file = st.file_uploader('Input the data')
-
-    docid = st.selectbox(
-        'Choose a document to show texts:',
-        list(df_docs['id']),
-        format_func= lambda x: df_docs.loc[df_docs['id'] == x, 'docpath'].values[0],
-        index=None
-    )
-    if docid:
-        texts = requests.get(f'http://localhost:8080/documents/{docid}/texts').json()
-
-        if texts:
-            df_texts = pd.DataFrame(texts)
-            pagenumber = st.pills('Page', df_texts['pagenumber'].sort_values(inplace=False).unique())
-            
-            if pagenumber:
-                texts = requests.get(f'http://localhost:8080/documents/{docid}/texts?pagenumber={pagenumber}').json()
-
-            st.dataframe(texts)
-            for txt in texts:
-                st.write_stream(typewriter(txt['textvalue']))
+    texts = paging_data('texts')
+    if texts:
+        for txt in texts:
+            st.write_stream(typewriter(txt['textvalue']))
 
 
 def images_page():
-    _, df_docs = get_list_documents()
-    docid = st.selectbox(
-        'Choose a document to show texts:',
-        list(df_docs['id']),
-        format_func= lambda x: df_docs.loc[df_docs['id'] == x, 'docpath'].values[0],
-        index=None
-    )
+    images = paging_data('images')
+    if images:
+        for img in images:
+            st.image(img['imagepath'])
 
-    if docid:
-        images = requests.get(f'http://localhost:8080/documents/{docid}/images').json()
-
-        if images:
-            df_images = pd.DataFrame(images)
-            pagenumber = st.pills('Page', df_images['pagenumber'].sort_values(inplace=False).unique())
-
-            if pagenumber:
-                images = requests.get(f'http://localhost:8080/documents/{docid}/images?pagenumber={pagenumber}').json()
-
-            st.dataframe(images)
-            for path in df_images['imagepath']:
-                st.image(path)
 
 def entities_page():
-    _, df_docs = get_list_documents()
-    docid = st.selectbox(
-        'Choose a document to show texts:',
-        list(df_docs['id']),
-        format_func= lambda x: df_docs.loc[df_docs['id'] == x, 'docpath'].values[0],
-        index=None
-    )
-    
-    entities = requests.get(f'http://localhost:8080/documents/{docid}/named-entities').json()
-    df_entities = pd.DataFrame(entities)
+    entities = paging_data('named-entities')
+    if entities:
+        st.dataframe(entities)
 
-    pagenumber = st.pills('Page', df_entities['pagenumber'].sort_values(inplace=False).unique())
-    
-    if pagenumber:
-        entities = requests.get(f'http://localhost:8080/documents/{docid}/named-entities?pagenumber={pagenumber}').json()
-    st.dataframe(entities)
+
+def tables_page():
+    tables = paging_data('tables')
+    if tables:
+        for i, tbl in enumerate(tables):
+            st.write(f'Table {i+1}')
+            st.dataframe(tbl['tablejson'])
+            st.write('---')
+
 
 def _tab_definition():
-    st.set_page_config(page_title=PAGE_TITLE,page_icon=PAGE_ICON_TAB,initial_sidebar_state='expanded',layout='centered')
+    st.set_page_config(page_title=PAGE_TITLE,initial_sidebar_state='expanded',layout='centered')
 
 def _sidebar_definition():
     """
@@ -142,10 +127,12 @@ def _wall_definition(param):
         images_page()
     elif menu == 'Entity':
         entities_page()
+    elif menu == 'Table':
+        tables_page()
 
     
 if __name__ == "__main__":
     _tab_definition()
-    menu = st.sidebar.selectbox('Menu',['Home','Text','Image','Entity'])
+    menu = st.sidebar.selectbox('Menu',['Home','Text','Image','Entity', 'Table'])
     param = _sidebar_definition()
     _wall_definition(param)
