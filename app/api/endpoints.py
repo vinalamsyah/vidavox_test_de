@@ -119,6 +119,20 @@ async def get_images(docid: int, pagenumber: int = None):
     
     raise HTTPException(status_code=404, detail="Document not found.")
 
+@app.get('/documents/{docid}/tables')
+async def get_tables(docid: int, pagenumber: int = None):
+    query_str = 'select id, pagenumber, tablejson, extracted_at from extracted_tables_json'
+    query_str, params = where_builder(query_str, docid=docid, pagenumber=pagenumber)
+
+    result = query_data(query_str, params)
+    if result:
+        return [ 
+            {'id': row[0], 'docid': docid, 'pagenumber': row[1], 'tablejson': row[2], 'extracted_at': row[3]}
+            for row in result
+        ]
+    
+    raise HTTPException(status_code=404, detail="Document not found.")
+
 @app.get('/named-entities')
 async def get_all_entities() -> list[EntitiesData]:
     query_str = 'select id, docid, pagenumber, ordernumber, entityname, entitylabel, startposition, endposition, extracted_at from ner_data'
