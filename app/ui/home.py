@@ -1,43 +1,32 @@
-import streamlit as st 
-import asyncio
-import copy
-import json
-import pandas as pd
+import streamlit as st
 import requests
 import time
 
 PAGE_TITLE = "Live Demo: Multi-Modal Data From Scanned Documents"
+BACKEND_URL = 'http://localhost:8080'
 
-# from modules.downloadfunc import download_file,download_button
-# from modules.formatting import formatting_data,plotting_data
-# from job.routing import routing
-# from config.conf import *    
-# from objects.objects import map_visualizer,data_visualization
-
-def get_list_documents():
-    documents = requests.get('http://localhost:8080/documents/all').json()
-    df_docs = pd.DataFrame(documents)
-    return documents, df_docs
 
 def paging_data(element):
-    _, df_docs = get_list_documents()
+    # _, df_docs = get_list_documents()
+    documents = requests.get(f'{BACKEND_URL}/documents/all').json()
+    documents = { doc['id']: doc['docpath'] for doc in documents }
     docid = st.selectbox(
         'Choose a document to show texts:',
-        list(df_docs['id']),
-        format_func= lambda x: df_docs.loc[df_docs['id'] == x, 'docpath'].values[0],
+        documents.keys(),
+        format_func= lambda x: documents[x],
         index=None
     )
 
     result = None
     if docid:
-        result = requests.get(f'http://localhost:8080/documents/{docid}/{element}').json()
+        result = requests.get(f'{BACKEND_URL}/documents/{docid}/{element}').json()
 
         if result:
-            list_pages = list(set([ row['pagenumber'] for row in result ])) + ['all']
-            pagenumber = st.pills('Page', list_pages, default=list_pages[0])
+            pages = list(set([ row['pagenumber'] for row in result ])) + ['all']
+            pagenumber = st.pills('Page', pages, default=pages[0])
 
             if pagenumber != 'all':
-                result = requests.get(f'http://localhost:8080/documents/{docid}/{element}?pagenumber={pagenumber}').json()
+                result = requests.get(f'{BACKEND_URL}/documents/{docid}/{element}?pagenumber={pagenumber}').json()
             
             st.dataframe(result)
 
@@ -49,7 +38,7 @@ def typewriter(text):
         time.sleep(0.01)
 
 def home_page():
-    documents, _ = get_list_documents()
+    documents = requests.get(f'{BACKEND_URL}/documents/all').json()
     st.write('How To Use: ')
     st.write("""
     1. Pilih menu data yang ingin ditampilkan
@@ -98,16 +87,6 @@ def _sidebar_definition():
     biasanya untuk config hyperparameter dan config config lainnya
     nanti hyper param ini dibungkus terus di return dalam satu paket
     """
-    st.sidebar.write('Welcome to', PAGE_TITLE)
-    if menu == 'Routing Optimizer [JSON]':
-        # download_file(r'repository\data_exp\test.json','Sample.json',True)
-        st.write('huhuhu')
-
-    if menu == 'Routing Optimizer [xlsx]':
-        # download_file(r'repository\data_exp\Excel\delivery.xlsx','Delivery.xlsx',True)
-        # download_file(r'repository\data_exp\Excel\vehicle.xlsx','Vehicle.xlsx',True)
-        # download_file(r'repository\data_exp\Excel\depot.xlsx','Depot.xlsx',True)
-        st.write('hohoho')
 
     param = "INI PARAM DISINI MESTINYA"
     return param
