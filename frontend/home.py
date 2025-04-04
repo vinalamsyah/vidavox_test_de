@@ -32,10 +32,12 @@ def paging_data(element):
 
     return result
 
+
 def typewriter(text):
     for word in text.split(' '):
         yield word + " "
         time.sleep(0.01)
+
 
 def home_page():
     documents = requests.get(f'{BACKEND_URL}/documents/all').json()
@@ -48,6 +50,7 @@ def home_page():
     """)
     if documents:
         st.dataframe(documents)
+
 
 def texts_page():
     texts = paging_data('texts')
