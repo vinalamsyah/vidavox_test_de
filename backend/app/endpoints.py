@@ -7,7 +7,7 @@ from io import BytesIO
 DBNAME = 'vidavox_test'
 USER = 'postgres'
 PASS = 'postgres'
-HOST = 'localhost'
+HOST = 'host.docker.internal'
 PORT = '5432'
 config = {
     'dbname': DBNAME,

@@ -8,10 +8,16 @@ WORKDIR /code
 COPY ./requirements.txt /code/requirements.txt
 
 
+RUN apk add postgresql-dev
+
+
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 
 COPY ./app /code/app
 
 
-CMD ["fastapi", "run", "app/endpoints.py", "--port", "80"]
+WORKDIR /code/app
+
+
+CMD ["uvicorn", "endpoints:app", "--host", "0.0.0.0", "--port", "80"]
