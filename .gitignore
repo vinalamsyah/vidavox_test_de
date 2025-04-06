@@ -3,6 +3,5 @@ vidavox_env*
 *.png
 *.csv
 *.ipynb
-storage/tmp/2025*
 *__pycache__*
 xxx
