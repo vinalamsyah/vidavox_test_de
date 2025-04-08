@@ -4,10 +4,11 @@ from io import BytesIO
 from PIL import Image
 import traceback
 
-SAVE_PATH = f'{os.getcwd()}\\tmp'
+# SAVE_PATH = f'{os.getcwd()}\\tmp'
+SAVE_PATH = f'/data/output'
 
 def init_dir():
-    entry = f'{SAVE_PATH}\\{datetime.now().strftime('%Y%m%d%H%M%S%f')}'
+    entry = f'{SAVE_PATH}/{datetime.now().strftime('%Y%m%d%H%M%S%f')}'
     try:
         os.makedirs(f'{entry}/layouts')
         os.makedirs(f'{entry}/images')

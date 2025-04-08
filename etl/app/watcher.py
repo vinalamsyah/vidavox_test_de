@@ -80,7 +80,8 @@ if __name__ == '__main__':
     event_handler = MyHandler()
 
     # Set up observer to watch a specific directory
-    directory_to_watch = f"{os.getcwd()}\\input"
+    # directory_to_watch = f"{os.getcwd()}\\input"
+    directory_to_watch = f"/data/input"
     observer.schedule(event_handler, directory_to_watch)
 
     # Start the observer
