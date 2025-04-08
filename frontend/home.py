@@ -3,7 +3,7 @@ import requests
 import time
 
 PAGE_TITLE = "Live Demo: Multi-Modal Data From Scanned Documents"
-BACKEND_URL = 'http://localhost:8080'
+BACKEND_URL = 'http://host.docker.internal:8080'
 
 
 def paging_data(element):
