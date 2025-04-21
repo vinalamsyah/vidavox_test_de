@@ -1,6 +1,7 @@
 # ETL Pipeline for Multi-Modal Data
 ---
 ### Pre-requisites
+
 Before setting-up this project, please make sure that [Docker](https://www.docker.com/products/docker-desktop/) is installed properly.
 ---
 ### Setup
