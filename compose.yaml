@@ -1,0 +1,47 @@
+name: vidavox_etl
+services:
+
+  frontend:
+    build: ./frontend
+    container_name: frontend_service
+    ports:
+      - '80:80'
+    volumes:
+      - ./storage/tmp:/data/output:ro
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    container_name: backend_service
+    ports:
+      - '3000:80'
+    depends_on:
+      - database
+
+  etl:
+    build: ./etl
+    container_name: etl_service
+    volumes:
+      - ./etl/input:/data/input:ro
+      - ./storage/tmp:/data/output:rw
+    depends_on:
+      - database
+
+  database:
+    image: postgres:14-alpine
+    container_name: database_service
+    restart: always
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: P@ssw0rd
+      POSTGRES_ROOT_PASSWORD: root
+    ports:
+      - '65432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./storage/database/ddl.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  pgdata:
