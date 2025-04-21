@@ -23,10 +23,10 @@ def init_dir():
 def save_layouts(entry: str, layouts):
     print('saving layouts')
     for i, layout in enumerate(layouts):
-        Image.fromarray(layout['full']).save(f'{entry}\\layouts\\{i+1}-0.png') # Save full layout
+        Image.fromarray(layout['full']).save(f'{entry}/layouts/{i+1}-0.png') # Save full layout
 
         for j, sgmt in enumerate(layout['segments']):
-            Image.fromarray(sgmt).save(f'{entry}\\layouts\\{i+1}-{j+1}.png') # Save segments
+            Image.fromarray(sgmt).save(f'{entry}/layouts/{i+1}-{j+1}.png') # Save segments
 
 def save_images(entry: str, clips):
     print('saving images')
@@ -36,7 +36,7 @@ def save_images(entry: str, clips):
 
     for pagenumber, clip in clips:
         for j, img in enumerate(clip):
-            save_path = f'{entry}\\images\\{k+1}.png'
+            save_path = f'{entry}/images/{k+1}.png'
             try:
                 Image.fromarray(img).save(save_path)
                 Image.fromarray(img).save(img_binary, format='PNG')

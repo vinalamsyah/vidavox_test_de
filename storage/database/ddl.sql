@@ -4,7 +4,7 @@
 
 -- DROP TABLE public.documents;
 
-CREATE TABLE public.documents (
+CREATE TABLE IF NOT EXISTS public.documents (
 	id serial4 NOT NULL,
 	docpath varchar NULL,
 	uploaded_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
@@ -18,7 +18,7 @@ CREATE TABLE public.documents (
 
 -- DROP TABLE public.extracted_charts;
 
-CREATE TABLE public.extracted_charts (
+CREATE TABLE IF NOT EXISTS public.extracted_charts (
 	id serial4 NOT NULL,
 	docid int4 NULL,
 	pagenumber int4 NULL,
@@ -35,7 +35,7 @@ CREATE TABLE public.extracted_charts (
 
 -- DROP TABLE public.extracted_images;
 
-CREATE TABLE public.extracted_images (
+CREATE TABLE IF NOT EXISTS public.extracted_images (
 	id serial4 NOT NULL,
 	docid int4 NULL,
 	pagenumber int4 NULL,
@@ -53,7 +53,7 @@ CREATE TABLE public.extracted_images (
 
 -- DROP TABLE public.extracted_tables_json;
 
-CREATE TABLE public.extracted_tables_json (
+CREATE TABLE IF NOT EXISTS public.extracted_tables_json (
 	id serial4 NOT NULL,
 	docid int4 NULL,
 	pagenumber int4 NULL,
@@ -69,7 +69,7 @@ CREATE TABLE public.extracted_tables_json (
 
 -- DROP TABLE public.extracted_tables_raw;
 
-CREATE TABLE public.extracted_tables_raw (
+CREATE TABLE IF NOT EXISTS public.extracted_tables_raw (
 	id serial4 NOT NULL,
 	docid int4 NULL,
 	pagenumber int4 NULL,
@@ -88,7 +88,7 @@ CREATE TABLE public.extracted_tables_raw (
 
 -- DROP TABLE public.extracted_texts;
 
-CREATE TABLE public.extracted_texts (
+CREATE TABLE IF NOT EXISTS public.extracted_texts (
 	id serial4 NOT NULL,
 	docid int4 NULL,
 	pagenumber int4 NULL,
@@ -105,7 +105,7 @@ CREATE TABLE public.extracted_texts (
 
 -- DROP TABLE public.ner_data;
 
-CREATE TABLE public.ner_data (
+CREATE TABLE IF NOT EXISTS public.ner_data (
 	id serial4 NOT NULL,
 	entityname varchar NULL,
 	entitylabel varchar NULL,

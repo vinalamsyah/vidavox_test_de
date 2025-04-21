@@ -2,7 +2,7 @@ from pdf2image import convert_from_path
 import cv2
 import numpy as np
 
-POPPLER_PATH = r'C:\Users\MuhammadNAAL\AppData\Local\Programs\poppler-24.08.0\Library\bin'
+# POPPLER_PATH = r'C:\Users\MuhammadNAAL\AppData\Local\Programs\poppler-24.08.0\Library\bin'
 COLOR_CODE = {
     'r': (255,0,0),
     'g': (0,255,0),
@@ -14,7 +14,7 @@ COLOR_CODE = {
 def pdf_to_image(filename: str):
     """Wrapper function for converting PDF to Pillow Image"""
     print('converting pdf to image')
-    return convert_from_path(pdf_path=filename, poppler_path=POPPLER_PATH)
+    return convert_from_path(pdf_path=filename)
 
 def _sort_contours(contours):
     boundingBoxes = [cv2.boundingRect(c) for c in contours]

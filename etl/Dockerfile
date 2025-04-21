@@ -20,4 +20,4 @@ COPY ./app /code/app
 WORKDIR /code/app
 
 
-CMD ["python", "watcher.py"]
+CMD ["python", "-u", "watcher.py"]

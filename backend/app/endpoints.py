@@ -4,11 +4,11 @@ import psycopg2 as pg
 # import numpy as np
 from io import BytesIO
 
-DBNAME = 'vidavox_test'
+DBNAME = 'postgres'
 USER = 'postgres'
-PASS = 'postgres'
+PASS = 'P@ssw0rd'
 HOST = 'host.docker.internal'
-PORT = '5432'
+PORT = '65432'
 config = {
     'dbname': DBNAME,
     'user': USER,

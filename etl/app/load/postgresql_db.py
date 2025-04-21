@@ -1,10 +1,10 @@
 import psycopg2 as pg
 
-DBNAME = 'vidavox_test'
+DBNAME = 'postgres'
 USER = 'postgres'
-PASS = 'postgres'
-HOST = 'localhost'
-PORT = '5432'
+PASS = 'P@ssw0rd'
+HOST = 'host.docker.internal'
+PORT = '65432'
 config = {
     'dbname': DBNAME,
     'user': USER,
